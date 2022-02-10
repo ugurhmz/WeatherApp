@@ -93,11 +93,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 return
             }
             
-            print(result.currently.summary)
-            
-            
+           
+            self.weatherModels.append(contentsOf: result.daily.data)
+        
             
             // Update UI
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            
+            
             
         }).resume()
         
@@ -116,7 +121,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // cellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+       
+        let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
+            cell.configure(with: weatherModels[indexPath.row])
+        
+        return cell
     }
     
 
