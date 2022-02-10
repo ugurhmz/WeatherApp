@@ -15,8 +15,7 @@ class WeatherTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        backgroundColor = .secondarySystemBackground
-        
+       
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -36,10 +35,36 @@ class WeatherTableViewCell: UITableViewCell {
     
     // configure
     func configure(with model: DailyWeatherEntry) {
+        
+        // text-align
+        self.lowTempLabel.textAlignment = .center
+        self.highTempLabel.textAlignment = .center
+        
+        
+        // text
         self.lowTempLabel.text = "\(Int((model.temperatureLow - 32)*(5/9)))°C"
         self.highTempLabel.text = "\(Int((model.temperatureHigh - 32)*(5/9)))°C"
         self.dayLabel.text = getDateForDate(Date(timeIntervalSince1970: Double(model.time)))
-        self.iconImgView.image = UIImage(named:  "sun")
+        self.dayLabel.font = UIFont(name : "Helvetica-Bold", size: 21)
+        self.iconImgView.contentMode = .scaleAspectFit
+       
+        
+        let icon = model.icon.lowercased()
+        
+        if icon.contains("clear") {
+            self.iconImgView.image = UIImage(named:"clear-day")
+            
+        } else if icon.contains("rain") {
+            self.iconImgView.image = UIImage(named: "rain")
+            
+        } else if icon.contains("partly-cloudy-day"){
+            self.iconImgView.image = UIImage(named: "partly-cloudy-day")
+        } else {
+            self.iconImgView.image = UIImage(named: "cloud")
+        }
+        
+         
+        
     }
     
     
@@ -50,7 +75,7 @@ class WeatherTableViewCell: UITableViewCell {
         }
         
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
+        formatter.dateFormat = "EEEE"
         
         return formatter.string(from: inputDate)
     }

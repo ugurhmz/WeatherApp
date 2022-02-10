@@ -41,7 +41,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0WQ-tw-qQ1">
-                        <rect key="frame" x="247" y="51" width="60" height="80"/>
+                        <rect key="frame" x="247" y="51.5" width="60" height="80"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="80" id="k7U-gD-MTg"/>
                             <constraint firstAttribute="width" constant="60" id="tA3-H2-t2I"/>
