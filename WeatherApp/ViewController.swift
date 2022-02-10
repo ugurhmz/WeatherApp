@@ -11,11 +11,17 @@
 
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
 
     @IBOutlet var tableView : UITableView!
     var weatherModels = [Weather]()
+    
+    // location
+    let locationManager = CLLocationManager()
+    var currentLocation : CLLocation?
+    
     
     
     
@@ -31,6 +37,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        setupLocation()
+    }
+    
+    
+    
+    // Location
+    func setupLocation(){
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if !locations.isEmpty, currentLocation == nil {
+            currentLocation = locations.first
+            locationManager.stopUpdatingLocation()
+            requestWeatherForLocation()
+        }
+    }
+    
+    
+    func requestWeatherForLocation(){
+        guard let currentLocation = currentLocation else {
+            return
+        }
+
+        let long = currentLocation.coordinate.longitude
+        let lat = currentLocation.coordinate.latitude
+        
+        print("\(long) | \(lat)")
+    }
+    
     
     
     

@@ -1,9 +1,4 @@
-//
-//  WeatherTableViewCell.swift
-//  WeatherApp
-//
-//  Created by ugur-pc on 10.02.2022.
-//
+
 
 import UIKit
 
