@@ -12,6 +12,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     @IBOutlet var tableView : UITableView!
     var weatherModels = [DailyWeatherEntry]()
+    var hourlyModels = [HourlyWeatherEntry]()
+    var currentTimezone : String?
+    
     
     // location
     let locationManager = CLLocationManager()
@@ -84,6 +87,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let long = currentLocation.coordinate.longitude
         let lat = currentLocation.coordinate.latitude
         
+        print("\(long) | \(lat)")
         
         let url  = "https://api.darksky.net/forecast/ddcc4ebb2a7c9930b90d9e59bda0ba7a/\(lat),\(long)?exclude=[flags,minutely]"
         
@@ -115,10 +119,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
            
             self.weatherModels.append(contentsOf: result.daily.data)
-        
+           
             
             let current = result.currently
             self.current = current
+            
+            self.hourlyModels = result.hourly.data
+            self.currentTimezone =  result.timezone
             
             // Update UI
             DispatchQueue.main.async {
@@ -177,18 +184,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
 
         
+        guard let currentTimezone = self.currentTimezone else {
+            return UIView()
+        }
         
         
-        // Text set
-        locationLabel.text = "Current loc"
+        //  TOP - currentlocation
+        locationLabel.text = "\(currentTimezone)"
         locationLabel.textColor = .white
         locationLabel.font = UIFont(name : "Helvetica", size:25)
         
-        
+        //  TOP - summary
         summaryLabel.text = "\(currentWeather.summary)"
         summaryLabel.textColor = .white
         summaryLabel.font = UIFont(name : "Helvetica", size:25)
         
+        
+        //  TOP - temperature
         tempLabel.text = String(format: "%.1f °C", ((currentWeather.temperature - 32 ) * (5/9)))
         tempLabel.font = UIFont(name : "Helvetica-Bold", size: 32)
         tempLabel.textColor = .orange
@@ -198,9 +210,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     
+    // numberOfSections
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    
     
     // numberOfRowsInSection
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if section == 0 {
+            // 1 cell CollectionViewCell
+            return 1
+        }
+        
+        // models.count
         return weatherModels.count
     }
     
@@ -210,6 +235,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // cellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
        
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: HourlyTableViewCell.identifier, for: indexPath) as! HourlyTableViewCell
+            
+            cell.configure(with: hourlyModels)
+            
+            // cell-bg
+            cell.backgroundColor = UIColor(red: 35/255.0,
+                                           green: 130/255.0,
+                                           blue: 175/255.0,
+                                           alpha: 0.9)
+            
+            return cell
+        }
+        
+        
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
             cell.configure(with: weatherModels[indexPath.row])
         
@@ -230,9 +271,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 }
 
-
-
-//  MODEL
 
 
 //      API  -    first come keys.
